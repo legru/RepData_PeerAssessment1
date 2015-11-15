@@ -1,17 +1,12 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 ## Loading and preprocessing the data
 
 __*Show any code that is needed to*__
 
 __*Load the data (i.e. read.csv())*__
 
-```{r data_loading, cache=TRUE}
 
+```r
 # Location of the  project
 project.dir= "C:/Users/Massimo/OneDrive/Documents/GitHub/Coursera/DataScience/ReproducibleResearch/RepData_PeerAssessment1"
 
@@ -32,9 +27,24 @@ All the data is stored in the variable `data.raw`.
 
 A quick inspection
 
-```{r data_inspection}
+
+```r
 names(data.raw)
+```
+
+```
+## [1] "steps"    "date"     "interval"
+```
+
+```r
 str(data.raw)
+```
+
+```
+## 'data.frame':	17568 obs. of  3 variables:
+##  $ steps   : int  NA NA NA NA NA NA NA NA NA NA ...
+##  $ date    : Factor w/ 61 levels "2012-10-01","2012-10-02",..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ interval: int  0 5 10 15 20 25 30 35 40 45 ...
 ```
 
 
@@ -42,7 +52,8 @@ __*Process/transform the data (if necessary) into a format suitable for your ana
 
 Load libraries required for the analysis
 
-```{r libraries,message=FALSE,warning=FALSE}
+
+```r
 # libraries required
 library(ggplot2, warn.conflicts = FALSE, quietly=TRUE)
 library(dplyr, warn.conflicts = FALSE, quietly=TRUE)
@@ -53,7 +64,8 @@ options(scipen=999)
 
 Create a version of the data that does not contain any NA
 
-```{r Remove_NA}
+
+```r
 # ignore the missing values
 data.no_na <- na.omit(data.raw)
 ```
@@ -64,7 +76,8 @@ __*For this part of the assignment, you can ignore the missing values in the dat
 
 __*1. Calculate the total number of steps taken per day*__
 
-```{r steps_per_day}
+
+```r
 # extract the number of steps per day
 data.sum.day_steps <- summarise(group_by(data.no_na, date), 
                                 sum.steps=sum(steps))
@@ -73,7 +86,8 @@ data.sum.day_steps <- summarise(group_by(data.no_na, date),
 
 __*2. Make a histogram of the total number of steps taken each day*__
 
-```{r histogram}
+
+```r
 qplot(date,sum.steps,data=data.sum.day_steps,
       geom="histogram",
       stat="identity")+
@@ -83,25 +97,29 @@ qplot(date,sum.steps,data=data.sum.day_steps,
   theme(panel.background = element_rect(fill = 'white', colour = 'black'))
 ```
 
+![](PA1_template_files/figure-html/histogram-1.png) 
+
 
 __*3. Calculate and report the mean and median of the total number of steps taken per day*__
 
-```{r mean_median, echo=TRUE}
+
+```r
 # compute the mean
 data.mean_day_steps <- mean(data.sum.day_steps$sum.steps)
 
 # compute the median
 data.median_day_steps <- median(data.sum.day_steps$sum.steps)
-````
+```
 
- - the mean daily number of steps is `r data.mean_day_steps`
- - the median daily number of steps is `r data.median_day_steps`
+ - the mean daily number of steps is 10766.1886792
+ - the median daily number of steps is 10765
 
 ## What is the average daily activity pattern?
 
 __*1. Make a time series plot (i.e. `type = "l"`) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)*__
 
-````{r time_series_1, fig.width=10}
+
+```r
 # compute the average number of steps taken, averaged across all days
 # based on the 5-minute interval 
 data.no_na.mean_interval_steps <- summarise(group_by(data.no_na,
@@ -111,19 +129,30 @@ data.no_na.mean_interval_steps <- summarise(group_by(data.no_na,
 
 qplot(interval, mean.steps, data=data.no_na.mean_interval_steps,geom="line")+
   theme(panel.background = element_rect(fill = 'white', colour = 'black'))
-````
+```
+
+![](PA1_template_files/figure-html/time_series_1-1.png) 
 
 __*2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?*__
 
-````{r max_num_steps}
+
+```r
 # sort the  list 
 sort.mean.interval.steps <- arrange(data.no_na.mean_interval_steps,
                                     desc(mean.steps))
 # extract the first one
 sort.mean.interval.steps[1,]
-````
+```
 
-The 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps is ´r sort.mean.interval.steps[1,1]´ with ´r sort.mean.interval.steps[1,2]´ steps.
+```
+## Source: local data frame [1 x 2]
+## 
+##   interval mean.steps
+##      (int)      (dbl)
+## 1      835   206.1698
+```
+
+The 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps is Â´r sort.mean.interval.steps[1,1]Â´ with Â´r sort.mean.interval.steps[1,2]Â´ steps.
 
 ## Imputing missing values
 
@@ -131,20 +160,26 @@ __*Note that there are a number of days/intervals where there are missing values
 
 __*1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)*__
 
-````{r count_NA}
+
+```r
 # calculate the number of missing values
 dimNA <- dim(data.raw) - dim(data.no_na)
 # report the value
 dimNA[1]
-````
+```
 
-The number of total 'NA' is `r dimNA[1]`
+```
+## [1] 2304
+```
+
+The number of total 'NA' is 2304
 
 __*2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.*__
 
 I address the question by replacing the missing values with the mean value of the same interval across all days
 
-````{r strategy_for_NA}
+
+```r
 # this function replaces the NAs with the estimates
 # if the steps is NA, replace it the instant mean
 # otherwise keep the value
@@ -161,37 +196,49 @@ estimate_na_steps <- function(data_row) {
   # return the original steps, or its estimate
   steps
 }
- 
-````
+```
  
 
 __*3. Create a new dataset that is equal to the original dataset but with the missing data filled in.*__
 
-````{r replace_NA}
+
+```r
 # apply the function to the raw data read from the file
 #data.estimated <- transform(data.raw,steps=na.fill(steps,interval))
 
 data.estimated <- data.frame(steps= as.numeric(apply(data.raw,1,estimate_na_steps)),
                              date= data.raw$date,
                              interval= data.raw$interval)
-````
+```
 
 The data with the estimates is stored in `data.estimated`.
 
 Verify that the transformation worked correctly
 
-```{r verify_replace_NA}
+
+```r
 # the dimention of data.estimate is the same of data.raw
 dim(data.estimated)==dim(data.raw)
+```
+
+```
+## [1] TRUE TRUE
+```
+
+```r
 # data.estimate has no NA
 sum(is.na(data.estimated))==0
+```
+
+```
+## [1] TRUE
 ```
 
 
 __*4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?*__
 
-```{r estimated_mean_median}
 
+```r
 # extract the estimated number of steps per day
 est.data.sum.day_steps <- summarise(group_by(data.estimated, date), 
                                     sum.steps=sum(steps))
@@ -216,23 +263,25 @@ histogram= histogram + geom_abline(intercept = est.median_day_steps, slope = 0,
                                    color= "lightblue")
 #display
 histogram
-````
+```
+
+![](PA1_template_files/figure-html/estimated_mean_median-1.png) 
 
 The histogram above shows shows the estimated number of steps per day, while the light blue line shows the value  of the median (and the mean) daily number of steps.
 
 The requested mean and median values are below.
 
- - the mean daily number of steps is `r est.mean_day_steps`
- - the median daily number of steps is `r est.median_day_steps`
+ - the mean daily number of steps is 10766.1886792
+ - the median daily number of steps is 10766.1886792
 
 
 __*Impact of imputing missing data on the estimates of the total daily number of steps*__
 
-`est.mean_day_steps - data.mean_day_steps` = `r est.mean_day_steps - data.mean_day_steps` 
+`est.mean_day_steps - data.mean_day_steps` = 0 
 
 and
 
-`est.median_day_steps - data.median_day_steps` = `r est.median_day_steps - data.median_day_steps`
+`est.median_day_steps - data.median_day_steps` = 1.1886792
 
 The means and median do not differ.  Although this is somewhat surprising, in reality it is not because the missing values all concentrated in 8 days (2012-10-01 2012-10-08 2012-11-01 2012-11-04 2012-11-09 2012-11-10 2012-11-14
 2012-11-30) and in these days all values are replaced with the corresponding mean values.  As a consequence it woudl be rather suprising to find a major chance on the means and the median. 
@@ -243,7 +292,8 @@ __*For this part the weekdays() function may be of some help here. Use the datas
 
 __*1. Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.*__
 
-```{r weekend_weekday}
+
+```r
 # define constant labels for week end and week 
 weekend.level <- "weekend"
 weekday.level <- "weekday"
@@ -263,7 +313,8 @@ __*2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5
 
 
 
-````{r plot_weekdays_weekend, fig.width=10}
+
+```r
 # compute the mean steps distinguishing week days and week ends
 mean.interval.steps <- summarise(group_by(data.estimated.we_wd, 
                                           interval, 
@@ -281,6 +332,7 @@ plot.final <- ggplot(mean.interval.steps,aes(interval,steps.mean))+
 
 # plot the graph
 plot.final 
+```
 
-````
+![](PA1_template_files/figure-html/plot_weekdays_weekend-1.png) 
 
