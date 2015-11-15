@@ -97,7 +97,7 @@ qplot(date,sum.steps,data=data.sum.day_steps,
   theme(panel.background = element_rect(fill = 'white', colour = 'black'))
 ```
 
-![](ReproducibleResearch_PeerAssignment_1_files/figure-html/histogram-1.png) 
+![](PeerAssignment_1_files/figure-html/histogram-1.png) 
 
 
 __*3. Calculate and report the mean and median of the total number of steps taken per day*__
@@ -131,7 +131,7 @@ qplot(interval, mean.steps, data=data.no_na.mean_interval_steps,geom="line")+
   theme(panel.background = element_rect(fill = 'white', colour = 'black'))
 ```
 
-![](ReproducibleResearch_PeerAssignment_1_files/figure-html/time_series_1-1.png) 
+![](PeerAssignment_1_files/figure-html/time_series_1-1.png) 
 
 __*2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?*__
 
@@ -265,7 +265,7 @@ histogram= histogram + geom_abline(intercept = est.median_day_steps, slope = 0,
 histogram
 ```
 
-![](ReproducibleResearch_PeerAssignment_1_files/figure-html/estimated_mean_median-1.png) 
+![](PeerAssignment_1_files/figure-html/estimated_mean_median-1.png) 
 
 The histogram above shows shows the estimated number of steps per day, while the light blue line shows the value  of the median (and the mean) daily number of steps.
 
@@ -334,5 +334,5 @@ plot.final <- ggplot(mean.interval.steps,aes(interval,steps.mean))+
 plot.final 
 ```
 
-![](ReproducibleResearch_PeerAssignment_1_files/figure-html/plot_weekdays_weekend-1.png) 
+![](PeerAssignment_1_files/figure-html/plot_weekdays_weekend-1.png) 
 
