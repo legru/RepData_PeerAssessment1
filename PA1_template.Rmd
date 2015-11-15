@@ -74,12 +74,9 @@ data.sum.day_steps <- summarise(group_by(data.no_na, date),
 __*2. Make a histogram of the total number of steps taken each day*__
 
 ```{r histogram}
-qplot(date,sum.steps,data=data.sum.day_steps,
-      geom="histogram",
-      stat="identity")+
+qplot(sum.steps,data=data.sum.day_steps,
+      geom="histogram")+
   # fix labels position
-  theme(axis.text.x = element_text(angle = 90, 
-                                   vjust = 0.5, hjust=1))+
   theme(panel.background = element_rect(fill = 'white', colour = 'black'))
 ```
 
@@ -96,6 +93,20 @@ data.median_day_steps <- median(data.sum.day_steps$sum.steps)
 
  - the mean daily number of steps is `r data.mean_day_steps`
  - the median daily number of steps is `r data.median_day_steps`
+ 
+ 
+
+#### Note
+
+Upon submission I wondered whether *total number of steps taken per day* means one mean and one median  for EACH day.  In https://class.coursera.org/repdata-034/forum/thread?thread_id=27 David Hood our COMMUNITY TA points out:
+
+Step 1 - calculate a set of totals of the the number of sets in each day 
+
+Step 2 - using the set of totals, calculate the histogram 
+
+Step 3 - using the set of totals, calculate the mean and median
+
+So my  process should be correct.
 
 ## What is the average daily activity pattern?
 
@@ -203,13 +214,9 @@ est.mean_day_steps <- mean(est.data.sum.day_steps$sum.steps)
 est.median_day_steps <- median(est.data.sum.day_steps$sum.steps)
 
 # plot histogram
-histogram= qplot(date,sum.steps,
+histogram= qplot(sum.steps,
                  data=est.data.sum.day_steps,
-                 geom="histogram",
-                 stat="identity")+  
-  # fix labels position
-  theme(axis.text.x = element_text(angle = 90, 
-                                   vjust = 0.5, hjust=1))+
+                 geom="histogram")+  
   theme(panel.background = element_rect(fill = 'white', colour = 'black'))
 # add the median (and the mean that has basically the same value)
 histogram= histogram + geom_abline(intercept = est.median_day_steps, slope = 0,
