@@ -155,19 +155,15 @@ __*2. Which 5-minute interval, on average across all the days in the dataset, co
 # sort the  list 
 sort.mean.interval.steps <- arrange(data.no_na.mean_interval_steps,
                                     desc(mean.steps))
-# extract the first one
-sort.mean.interval.steps[1,]
+# extract the first time  instant
+instant= sort.mean.interval.steps[1,1]
+
+# get the max number of steps
+max_steps=  sort.mean.interval.steps[1,2]
 ```
 
-```
-## Source: local data frame [1 x 2]
-## 
-##   interval mean.steps
-##      (int)      (dbl)
-## 1      835   206.1698
-```
+The 5-minute interval, on average across all the days in the dataset, that contains the maximum number of steps is 835 with 206.1698113.
 
-The 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps is ´r sort.mean.interval.steps[1,1]´ with ´r sort.mean.interval.steps[1,2]´ steps.
 
 ## Imputing missing values
 
