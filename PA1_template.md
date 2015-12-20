@@ -115,19 +115,6 @@ data.median_day_steps <- median(data.sum.day_steps$sum.steps)
  - the mean daily number of steps is 10766.1886792
  - the median daily number of steps is 10765
  
- 
-
-#### Note
-
-Upon submission I wondered whether *total number of steps taken per day* means one mean and one median  for EACH day.  In https://class.coursera.org/repdata-034/forum/thread?thread_id=27 David Hood our COMMUNITY TA points out:
-
-Step 1 - calculate a set of totals of the the number of sets in each day 
-
-Step 2 - using the set of totals, calculate the histogram 
-
-Step 3 - using the set of totals, calculate the mean and median
-
-So my  process should be correct.
 
 ## What is the average daily activity pattern?
 
